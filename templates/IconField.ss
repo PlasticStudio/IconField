@@ -4,7 +4,7 @@
 			<input id="$ID" class="radio" name="$Name" type="radio" value="$Value"<% if $isChecked %> checked<% end_if %> />
 			<label for="$ID">
                 <% if Value %>
-                	<img src="$Value" />
+                	<img src="$Up.getFullRelativePath($Value)" />
                 <% end_if %>
             </label>
 		</li>

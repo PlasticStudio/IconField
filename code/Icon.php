@@ -4,6 +4,8 @@ namespace PlasticStudio\IconField;
 
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\DB;
+use SilverStripe\Core\Path;
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
 
 class Icon extends DBField
@@ -67,7 +69,8 @@ class Icon extends DBField
      **/
     public function IMG()
     {
-        $url = $this->URL();
+        $url = ModuleResourceLoader::singleton()->resolveURL($this->URL());
+
         return '<img class="icon" src="'.$url.'" />';
     }
     
@@ -85,9 +88,10 @@ class Icon extends DBField
             user_error('Deprecation notice: Direct access to $Icon.SVG in templates is deprecated, please use $Icon', E_USER_WARNING);
         }
         
-        // not entirely sure we need to run this through resolvePath
-        // TODO: further testing to see if it's necessary
-        $filePath = ModuleResourceLoader::singleton()->resolvePath($url);
+        $filePath = Path::join(
+            Director::baseFolder(),
+            $url
+        );
 
         if (!file_exists($filePath)) {
             return false;

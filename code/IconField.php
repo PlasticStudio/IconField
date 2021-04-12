@@ -61,7 +61,8 @@ class IconField extends OptionsetField
         $icons = [];
         $extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
         $relative_folder_path = ModuleResourceLoader::singleton()->resolveURL($this->getFolderName());
-        $absolute_folder_path = Path::join(Director::publicFolder(), $relative_folder_path);
+        $absolute_folder_path = $this->getAbsolutePathFromRelative($relative_folder_path);
+
 
         // Scan each directory for files
         if (file_exists($absolute_folder_path)) {
@@ -83,6 +84,36 @@ class IconField extends OptionsetField
 
         $this->source = $icons;
         return $this;
+    }
+
+    /**
+     * Generate absolute path from relative path
+     * (ie, prepend publicFolder or baseFolder path)
+     * @param string relative path
+     *
+     * @return string absolute path
+     */
+    public function getAbsolutePathFromRelative($relative_path)
+    {
+        return Path::join(
+            (Director::publicDir() ? Director::publicFolder() : Director::baseFolder()),
+            ModuleResourceLoader::singleton()->resolveURL($relative_path)
+        );
+    }
+
+    /**
+     * Generate full relative path from partial relative path.
+     * Uses ModuleResourceLoader->resolveURL to handle addition of _resources dir etc
+     * For example, the icon path is stored in the db as 'app/client/assets/icons/default/icon.svg'
+     * but we need the full relative path to render the icon in the field template: '/_resources/app/client/assets/icons/default/icon.svg'
+     * @param string partial relative path
+     *
+     * @return string full relative path
+     */
+
+    public function getFullRelativePath($path)
+    {
+        return ModuleResourceLoader::singleton()->resolveURL($path);
     }
 
     /**
