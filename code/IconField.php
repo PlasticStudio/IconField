@@ -45,7 +45,7 @@ class IconField extends OptionsetField
     public function getFolderName()
     {
         if (is_null(self::$folder_name)) {
-            $this->folder_name = Config::inst()->get('PlasticStudio\IconField', 'icons_directory');
+            self::$folder_name = Config::inst()->get('PlasticStudio\IconField', 'icons_directory');
         }
         return self::$folder_name;
     }

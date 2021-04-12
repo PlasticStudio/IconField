@@ -4,4 +4,4 @@ Before:
   - "#app"
 ---
 PlasticStudio\IconField:
-  icons_directory: _resources/app/client/assets/icons
+  icons_directory: app/client/assets/icons/default
