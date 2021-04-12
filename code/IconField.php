@@ -9,27 +9,30 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FormField;
 use SilverStripe\View\Requirements;
+use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
 
 class IconField extends OptionsetField
 {
-    private static $sourceFolder;
+    private static $folder_name;
 
     /**
      * Construct the field
      *
      * @param string $name
      * @param null|string $title
-     * @param string $sourceFolder
+     * @param string $sourceFolder (legacy arg, for backwards-compatibility)
      *
      * @return array icons to provide as source array for the field
      **/
     public function __construct($name, $title = null, $sourceFolder = null)
     {
         if ($sourceFolder) {
-            user_error('Deprecation notice: IconField no longer accepts Source Folder as a third parameter. Please use IconField->setFolderName() instead.', E_USER_WARNING);
+            // TODO: set deprecation notice
+            // eg, "IconField no longer accepts Source Folder as a third parameter. Please use IconField->setFolderName() instead"
+            $this->setFolderName($sourceFolder);
         }
         parent::__construct($name, $title, []);
     }
@@ -39,30 +42,30 @@ class IconField extends OptionsetField
      *
      * @return string
      */
-    public function getSourceFolder()
+    public function getFolderName()
     {
-        if (is_null(self::$sourceFolder)) {
-            $this->sourceFolder = Config::inst()->get('PlasticStudio\IconField', 'icons_directory');
+        if (is_null(self::$folder_name)) {
+            $this->folder_name = Config::inst()->get('PlasticStudio\IconField', 'icons_directory');
         }
-        return self::$sourceFolder;
+        return self::$folder_name;
     }
 
     public function setFolderName($folder_name)
     {
-        self::$sourceFolder = $folder_name;
+        self::$folder_name = $folder_name;
         return $this;
     }
 
-    public function setSourceIcons($sourceFolder)
+    public function setSourceIcons()
     {
         $icons = [];
         $extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
-        $sourceFolder = $this->getSourceFolder();
-        $sourcePath = ModuleResourceLoader::singleton()->resolvePath($sourceFolder);
+        $relative_folder_path = ModuleResourceLoader::singleton()->resolveURL($this->getFolderName());
+        $absolute_folder_path = Path::join(Director::publicFolder(), $relative_folder_path);
 
         // Scan each directory for files
-        if (file_exists($sourcePath)) {
-            $directory = new DirectoryIterator($sourcePath);
+        if (file_exists($absolute_folder_path)) {
+            $directory = new DirectoryIterator($absolute_folder_path);
             foreach ($directory as $fileinfo) {
                 if ($fileinfo->isFile()) {
                     $extension = strtolower(pathinfo($fileinfo->getFilename(), PATHINFO_EXTENSION));
@@ -70,7 +73,7 @@ class IconField extends OptionsetField
                     // Only add to our available icons if it's an extension we're after
                     if (in_array($extension, $extensions)) {
                         // $value = Controller::join_links($sourceFolder, $fileinfo->getFilename());
-                        $value = Path::join($sourceFolder, $fileinfo->getFilename());
+                        $value = Path::join($relative_folder_path, $fileinfo->getFilename());
                         $title = $fileinfo->getFilename();
                         $icons[$value] = $title;
                     }
@@ -90,7 +93,7 @@ class IconField extends OptionsetField
     public function Field($properties = [])
     {
         Requirements::css('plasticstudio/iconfield:css/IconField.css');
-        $this->setSourceIcons(self::$sourceFolder);
+        $this->setSourceIcons();
         $source = $this->getSource();
         $options = [];
 
