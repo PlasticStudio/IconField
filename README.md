@@ -25,12 +25,17 @@ use PlasticStudio\IconField\IconField;
 - `IconField::create($name, $title)`
   - `$name` is the database field as defined in your class
   - `$title` is the label for this field
-- `$iconFolder` (optional) defines the directory where your icons can be found. If your project has a `public` directory, you'll need to make sure the path to this folder is exposed. Defaults to `app/client/assets/icons/default`. You can override this default in your project's own config like so:
+- Add a folder containing icons to your project; icons in this folder will be used by the field as options which you can select. the default location of this folder (as defined in `_config/config.yml`) is `app/client/assets/icons/default`. If your project has a `public` directory, you'll need to make sure the path to this folder is exposed. You can override this global default in your project's own config like so:
 
 ```
 PlasticStudio\IconField:
   icons_directory: app/client/assets/different/path/to/icons
 ```
 
-- To change your default icon directory, see `_config/config.yml`.
+- You can also set an icon folder path on a per-field basis by using `setFolderName()`, eg:
+
+```
+IconField::create('SocialIcon, 'Icon')->setFolderName('app/client/assets/icons/social')
+```
+
 - Use your icon in templates as you would any other property (eg `$PageIcon`). If your icon is an SVG, the SVG image data will be injected into the template. To prevent this, you can call `$PageIcon.IMG` instead to enforce use of `<img>` tags.
