@@ -22,9 +22,9 @@ use PlasticStudio\IconField\IconField;
 ```
 
 - Set your `$db` field to type `Icon` (eg `'PageIcon' => Icon::class`)
-- `IconField::create($name, $title, $iconFolder)`
-- `$name` is the database field as defined in your class
-- `$title` is the label for this field
+- `IconField::create($name, $title)`
+  - `$name` is the database field as defined in your class
+  - `$title` is the label for this field
 - `$iconFolder` (optional) defines the directory where your icons can be found. If your project has a `public` directory, you'll need to make sure the path to this folder is exposed. Defaults to `app/client/assets/icons/default`. You can override this default in your project's own config like so:
 
 ```
