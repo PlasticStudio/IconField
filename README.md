@@ -6,7 +6,7 @@
 
 Simplifies the use of icons in a way content authors can set icons without interfering with the asset library. Instead, the web developer provides the icon set which the end-user can use but not manipulate.
 
-![IconField](https://raw.githubusercontent.com/jaedb/IconField/master/screenshot.jpg)
+![IconField](https://raw.githubusercontent.com/PlasticStudio/IconField/master/screenshot.jpg)
 
 # Requirements
 
