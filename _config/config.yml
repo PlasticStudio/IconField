@@ -1,5 +1,8 @@
 ---
 Name: iconfield
+Before:
+  - "mysite"
+  - "app"
 ---
 PlasticStudio\IconField\IconField:
   icons_directory: app/client/assets/icons/default
