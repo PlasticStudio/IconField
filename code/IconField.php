@@ -73,7 +73,6 @@ class IconField extends OptionsetField
 
                     // Only add to our available icons if it's an extension we're after
                     if (in_array($extension, $extensions)) {
-                        // $value = Controller::join_links($sourceFolder, $fileinfo->getFilename());
                         $value = Path::join($relative_folder_path, $fileinfo->getFilename());
                         $title = $fileinfo->getFilename();
                         $icons[$value] = $title;
@@ -156,7 +155,6 @@ class IconField extends OptionsetField
 
         $this->setTemplate('IconField');
 
-        // return $this->customise($properties)->renderWith('IconField');
         return FormField::Field($properties);
     }
 
