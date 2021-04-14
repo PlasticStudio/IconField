@@ -28,7 +28,7 @@ use PlasticStudio\IconField\IconField;
 - Add a folder containing icons to your project; icons in this folder will be used by the field as options which you can select. the default location of this folder (as defined in `_config/config.yml`) is `app/client/assets/icons/default`. If your project has a `public` directory, you'll need to make sure the path to this folder is exposed. You can override this global default in your project's own config like so:
 
 ```
-PlasticStudio\IconField:
+PlasticStudio\IconField\IconField:
   icons_directory: app/client/assets/different/path/to/icons
 ```
 

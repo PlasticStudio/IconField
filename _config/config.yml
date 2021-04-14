@@ -1,7 +1,5 @@
 ---
 Name: iconfield
-Before:
-  - "#app"
 ---
-PlasticStudio\IconField:
+PlasticStudio\IconField\IconField:
   icons_directory: app/client/assets/icons/default
