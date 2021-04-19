@@ -60,7 +60,7 @@ class IconField extends OptionsetField
     {
         $icons = [];
         $extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
-        $relative_folder_path = ModuleResourceLoader::singleton()->resolveURL($this->getFolderName());
+        $relative_folder_path = $this->getFolderName();
         $absolute_folder_path = $this->getAbsolutePathFromRelative($relative_folder_path);
 
 
