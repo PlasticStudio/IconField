@@ -89,6 +89,7 @@ class Icon extends DBField
 
         $filePath = Path::join(
             Director::baseFolder(),
+            'public',
             $url
         );
 
