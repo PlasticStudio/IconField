@@ -19,7 +19,7 @@ class Icon extends DBField
     public function requireField()
     {
         DB::require_field($this->tableName, $this->name, 'Varchar(1024)');
-    }    
+    }
 
     /**
      * Default casting for this field
@@ -30,7 +30,7 @@ class Icon extends DBField
     {
         return $this->getTag();
     }
-    
+
 
     /**
      * Default casting for this field
@@ -40,7 +40,7 @@ class Icon extends DBField
     public function getTag()
     {
         $url = $this->URL() ?? '';
-        
+
         // We are an SVG, so return the SVG data
         if (substr($url, strlen($url) - 4) === '.svg') {
             return $this->SVG();
@@ -48,8 +48,8 @@ class Icon extends DBField
             return $this->IMG();
         }
     }
-    
-    
+
+
     /**
      * Get just the URL for this icon
      *
@@ -59,8 +59,8 @@ class Icon extends DBField
     {
         return $this->getValue();
     }
-    
-    
+
+
     /**
      * Construct IMG tag
      *
@@ -72,8 +72,8 @@ class Icon extends DBField
 
         return '<img class="icon" src="'.$url.'" />';
     }
-    
-    
+
+
     /**
      * Construct SVG data
      *
@@ -88,8 +88,7 @@ class Icon extends DBField
         }
 
         $filePath = Path::join(
-            Director::baseFolder(),
-            'public',
+            Director::publicDir() ? Director::publicFolder() : Director::baseFolder(),
             $url
         );
 
@@ -98,7 +97,7 @@ class Icon extends DBField
         }
 
         $svg = file_get_contents($filePath);
-        return '<span class="icon svg">'.$svg.'</span>';    
+        return '<span class="icon svg">'.$svg.'</span>';
     }
 
     /**
