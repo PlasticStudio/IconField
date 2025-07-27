@@ -114,6 +114,16 @@ class Icon extends DBField
             $url
         );
 
+        //if we have a public dir and we still haven't found our file lets try one more path including _resources
+        if (!file_exists($filePath) && Director::publicDir() ) {
+            $filePath = Path::join(
+                Director::publicFolder(),
+                '_resources',
+                $url
+            );
+        }
+
+
         if (!file_exists($filePath)) {
             return false;
         }
