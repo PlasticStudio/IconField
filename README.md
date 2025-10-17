@@ -21,7 +21,7 @@ Provides a visual icon picker for content authors. Icon files are managable via 
 If migrating from release 1 to 2:
 - check if svgs are allowed in mimetypes (guru: https://app.getguru.com/card/TjR6ab8c/SVG-Mime-type)
 - upgrade to v2.5
-- create new folders in CMS Files area based on IconField set up, eg `SiteIcons` (or reload cms page with iconfield to create)
+- create new folders in CMS Files area based on IconField set up, eg `SiteIcons` (or reload cms page with iconfield to create). Can have nested folders inside SiteIcons.
 - upload and publish icons
 - update IconFields to use new source path, eg `IconField::create('SocialIcon', 'Icon', 'SiteIcons')`
 - run task `IconFieldPathMigrator_BuildTask` for each class that has been updated
@@ -54,3 +54,4 @@ PlasticStudio\IconField\IconField:
   default_height: "30"
 
 ```
+
