@@ -23,8 +23,8 @@ If migrating from release 1 to 2:
 - upgrade to v2.5
 - create new folders in CMS Files area based on IconField set up, eg `SiteIcons` (or reload cms page with iconfield to create). Can have nested folders inside SiteIcons.
 - upload and publish icons
-- update IconFields to use new source path, eg `IconField::create('SocialIcon', 'Icon', 'SiteIcons')`
-- run task `IconFieldPathMigrator_BuildTask` for each class that has been updated
+- update IconFields to use new source path, eg `IconField::create('SocialIcon', 'Icon', 'SiteIcons')`. You should see relevant icons display in iconfield.
+- to update database and relink selected icon: run task `IconFieldPathMigrator_BuildTask` for each class that has been updated
 - make sure to add params `?classname=Skeletor\DataObjects\SummaryPanel&field=SVGIcon`
 - if your new folder is not 'SiteIcons', add this to the params as well, eg `&new-path=NewFolder`
 - lastly, remove the icon folder from client/assets
@@ -54,4 +54,5 @@ PlasticStudio\IconField\IconField:
   default_height: "30"
 
 ```
+
 
