@@ -27,7 +27,7 @@ class Icon extends DBField
      *
      * @return string
      */
-    public function forTemplate()
+    public function forTemplate(): string
     {
         return $this->getTag();
     }
@@ -38,12 +38,12 @@ class Icon extends DBField
      *
      * @return string
      */
-    public function getTag()
+    public function getTag(): string
     {
         $url = $this->URL() ?? '';
 
         // We are an SVG, so return the SVG data
-        if (substr($url, strlen($url) - 4) === '.svg') {
+        if (substr($url, -4) === '.svg') {
             return $this->SVG();
         } else {
             return $this->IMG();
