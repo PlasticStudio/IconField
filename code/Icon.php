@@ -4,6 +4,7 @@ namespace PlasticStudio\IconField;
 
 use SilverStripe\ORM\DB;
 use SilverStripe\Core\Path;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\FieldType\DBField;
@@ -119,11 +120,11 @@ class Icon extends DBField
     }
 
     /**
-     * (non-PHPdoc)
      * @see DBField::scaffoldFormField()
      */
-    public function scaffoldFormField($title = null, $params = null)
+    public function scaffoldFormField(?string $title = null, array $params = []): ?FormField
     {
         return IconField::create($this->name, $title);
     }
+
 }
