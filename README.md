@@ -19,10 +19,12 @@ Provides a visual icon picker for content authors. Icon files are managable via 
 # Migration
 
 If migrating from release 1 to 2:
-- update IconFields to use new source path, eg `IconField::create('SocialIcon', 'Icon', 'SiteIcons')`
-- create new folders in CMS Files area based on IconField set up, eg `SiteIcons`
+- check if svgs are allowed in mimetypes (guru: https://app.getguru.com/card/TjR6ab8c/SVG-Mime-type)
+- upgrade to v2
+- create new folders in CMS Files area based on IconField set up, eg `SiteIcons` (or reload cms page with iconfield to create). Can have nested folders inside SiteIcons.
 - upload and publish icons
-- run task `IconFieldPathMigrator_BuildTask` for each class that has been updated
+- update IconFields to use new source path, eg `IconField::create('SocialIcon', 'Icon', 'SiteIcons')`. You should see relevant icons display in iconfield.
+- to update database and relink selected icon: run task `IconFieldPathMigrator_BuildTask` for each class that has been updated
 - make sure to add params `?classname=Skeletor\DataObjects\SummaryPanel&field=SVGIcon`
 - if your new folder is not 'SiteIcons', add this to the params as well, eg `&new-path=NewFolder`
 - lastly, remove the icon folder from client/assets
@@ -50,4 +52,8 @@ use PlasticStudio\IconField\IconField;
 PlasticStudio\IconField\IconField:
   default_width: "30"
   default_height: "30"
+
 ```
+
+
+
