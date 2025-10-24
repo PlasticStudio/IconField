@@ -18,7 +18,7 @@ class Icon extends DBField
         'SVG' => 'HTMLFragment'
     );
 
-    public function requireField()
+    public function requireField(): void
     {
         DB::require_field($this->tableName, $this->name, 'Varchar(1024)');
     }
@@ -57,9 +57,9 @@ class Icon extends DBField
      *
      * @return string
      **/
-    public function URL()
+    public function URL(): string
     {
-        return $this->getValue();
+        return (string)$this->getValue();
     }
 
 
@@ -68,12 +68,12 @@ class Icon extends DBField
      *
      * @return string
      **/
-    public function IMG()
+    public function IMG(): string
     {
         $url = ModuleResourceLoader::singleton()->resolveURL($this->URL());
 
         if (!$url) {
-            return false;
+            return ''; // always return a string
         }
 
         // check for default width and height in the site's config.yml
@@ -98,7 +98,7 @@ class Icon extends DBField
      *
      * @return string
      **/
-    public function SVG()
+    public function SVG(): string
     {
         $url = $this->URL() ?? '';
 
@@ -112,7 +112,7 @@ class Icon extends DBField
         );
 
         if (!file_exists($filePath)) {
-            return false;
+            return ''; // always return a string
         }
 
         $svg = file_get_contents($filePath);
