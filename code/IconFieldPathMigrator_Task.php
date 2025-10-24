@@ -17,10 +17,10 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
      * 4. Run this task - include params
      */
 
-    protected $title = 'Update icon file paths to assets folder';
-    protected $enabled = true;
+    protected string $title = 'Update icon file paths to assets folder';
+    protected bool $enabled = true;
 
-    public function run($request)
+    public function run($request): void
     {
         $vars = $request->getVars();
 
@@ -48,51 +48,60 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
 
         $objects = $classname::get();
         $schema = DataObject::getSchema();
+
         if (!$schema->classHasTable($classname)) {
             die("Class $classname does not have a table.");
         }
+
         $tableName = Convert::raw2sql($schema->tableName($classname));// Sanitize column name
         $iconCol = Convert::raw2sql($iconField); // Sanitize column name
 
-
         if ($objects && $tableName) {
+            
             foreach ($objects as $object) {
+
+                $originIconPath = $object->$iconField;
+
                 // if there is an icon
-                if ($originIconPath = $object->$iconField) {
+                if ($originIconPath) {
+                    
                     $originIconName = basename($originIconPath);
-
-                    echo $object->Title . '<br>';
-                    echo 'Origin Icon Path: ' . $originIconPath . '<br>';
-                    echo 'Origin Icon Name: ' . $originIconName . '<br>';
-
                     $newIconPath = $folderPath . '/' . $originIconName;
-                    echo 'New Icon Path: ' . $newIconPath . '<br>';
+
+                    echo "Updating {$object->Title}<br>";
+                    echo "Origin: {$originIconPath}<br>";
+                    echo "New path: {$newIconPath}<br>";
 
                     DB::prepared_query("UPDATE {$tableName} SET {$iconCol} = ? WHERE ID = ?", [$newIconPath, $object->ID]);
-                    echo $tableName.' updated' . '<br>';
+                    
+                    echo "{$tableName} updated<br>";
 
+                    // Handle versioned objects
                     if ($object->hasExtension(Versioned::class)) {
+
                         $tableNameVersioned = $tableName.'_Versions';
                         DB::prepared_query("UPDATE {$tableNameVersioned} SET {$iconCol} = ? WHERE RecordID = ?", [$newIconPath, $object->ID]);
-                        echo $tableNameVersioned . '<br>';
+                        
+                        echo "{$tableNameVersioned} updated<br>";
 
                         if ($object->isPublished()) {
                             $tableNameLive = $tableName.'_Live';
                             DB::prepared_query("UPDATE {$tableNameLive} SET {$iconCol} = ? WHERE ID = ?", [$newIconPath, $object->ID]);
-                            echo $tableNameLive . '<br>';
+                            
+                            echo "{$tableNameLive} updated<br>";
                         }
                     }
 
 
-                    echo 'panel icon updated' . '<br>';
+                    echo "Panel icon updated<br>";
                 } else {
-                    echo $object->Title . '<br>no icon - no update' . '<br>';
+                    echo "{$object->Title}<br>No icon - skipped<br>";
                 }
 
                 echo '<br />-------<br />';
             }
         } else {
-            echo 'No objects found';
+            echo "No objects found for class {$classname}<br>";
         }
     }
 }
