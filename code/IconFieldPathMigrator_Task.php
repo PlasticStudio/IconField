@@ -6,6 +6,8 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\Versioned\Versioned;
+use Symfony\Component\Console\Input\InputInterface;
+use SilverStripe\PolyExecution\PolyOutput;
 
 class IconFieldPathMigrator_BuildTask extends BuildTask
 {
@@ -17,82 +19,89 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
      * 4. Run this task - include params
      */
 
-    protected $title = 'Update icon file paths to assets folder';
-    protected $enabled = true;
-
-    public function run($request)
+    protected string $title = 'Update icon file paths to assets folder';
+    protected bool $enabled = true;
+    
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        $vars = $request->getVars();
+        // Get query parameters (supports both CLI & HTTP dev/tasks)
+        $vars = $_GET ?? [];
 
         if (!isset($vars['classname']) || !isset($vars['field'])) {
-            echo 'Pass both class and field in the query string, eg ?classname=Skeletor\DataObjects\SummaryPanel&field=SVGIcon' . '<br>';
-            echo 'If new folder is not \'SiteIcons\', pass new-path in the query string, eg &new-path=NewFolder' . '<br>';
-            echo 'Classname needs to include namespacing' . '<br>';
-            return;
+            $output->writeLine('Pass both class and field in the query string, eg ?classname=Skeletor\DataObjects\SummaryPanel&field=SVGIcon');
+            $output->writeLine('If new folder is not "SiteIcons", pass new-path in the query string, eg &new-path=NewFolder');
+            $output->writeLine('Classname must include namespace');
+            return 1;
         }
 
         $classname = $vars['classname'];
         $iconField = $vars['field'];
+        $folderPath = isset($vars['new-path']) ? 'assets/' . $vars['new-path'] : 'assets/SiteIcons';
 
-        // check for folder path
-        if ( isset($vars['new-path']) ) {
-            $folderPath = 'assets/' . $vars['new-path'];
-        } else {
-            $folderPath = 'assets/SiteIcons';
-        }
-
-        // check if site is namespaced
         if (!ClassInfo::exists($classname)) {
-            die("Class $classname does not exist. Make sure to add the namespacing.");
+            $output->writeLine("Class {$classname} does not exist. Make sure to include namespace.");
+            return 1;
         }
 
         $objects = $classname::get();
         $schema = DataObject::getSchema();
+
         if (!$schema->classHasTable($classname)) {
-            die("Class $classname does not have a table.");
+            $output->writeLine("Class {$classname} does not have a database table.");
+            return 1;
         }
-        $tableName = Convert::raw2sql($schema->tableName($classname));// Sanitize column name
-        $iconCol = Convert::raw2sql($iconField); // Sanitize column name
 
+        $tableName = Convert::raw2sql($schema->tableName($classname));
+        $iconCol = Convert::raw2sql($iconField);
 
-        if ($objects && $tableName) {
-            foreach ($objects as $object) {
-                // if there is an icon
-                if ($originIconPath = $object->$iconField) {
-                    $originIconName = basename($originIconPath);
+        if (!$objects || !$tableName) {
+            $output->writeLine("No objects found for class {$classname}");
+            return 0;
+        }
 
-                    echo $object->Title . '<br>';
-                    echo 'Origin Icon Path: ' . $originIconPath . '<br>';
-                    echo 'Origin Icon Name: ' . $originIconName . '<br>';
+        foreach ($objects as $object) {
+            $originIconPath = $object->$iconField;
 
-                    $newIconPath = $folderPath . '/' . $originIconName;
-                    echo 'New Icon Path: ' . $newIconPath . '<br>';
+            if ($originIconPath) {
+                $originIconName = basename($originIconPath);
+                $newIconPath = $folderPath . '/' . $originIconName;
 
-                    DB::prepared_query("UPDATE {$tableName} SET {$iconCol} = ? WHERE ID = ?", [$newIconPath, $object->ID]);
-                    echo $tableName.' updated' . '<br>';
+                $output->writeLine("Updating {$object->Title}");
+                $output->writeLine("Origin: {$originIconPath}");
+                $output->writeLine("New path: {$newIconPath}");
 
-                    if ($object->hasExtension(Versioned::class)) {
-                        $tableNameVersioned = $tableName.'_Versions';
-                        DB::prepared_query("UPDATE {$tableNameVersioned} SET {$iconCol} = ? WHERE RecordID = ?", [$newIconPath, $object->ID]);
-                        echo $tableNameVersioned . '<br>';
+                DB::prepared_query(
+                    "UPDATE {$tableName} SET {$iconCol} = ? WHERE ID = ?",
+                    [$newIconPath, $object->ID]
+                );
+                $output->writeLine("{$tableName} updated");
 
-                        if ($object->isPublished()) {
-                            $tableNameLive = $tableName.'_Live';
-                            DB::prepared_query("UPDATE {$tableNameLive} SET {$iconCol} = ? WHERE ID = ?", [$newIconPath, $object->ID]);
-                            echo $tableNameLive . '<br>';
-                        }
+                if ($object->hasExtension(Versioned::class)) {
+                    $tableNameVersioned = $tableName . '_Versions';
+                    DB::prepared_query(
+                        "UPDATE {$tableNameVersioned} SET {$iconCol} = ? WHERE RecordID = ?",
+                        [$newIconPath, $object->ID]
+                    );
+                    $output->writeLine("{$tableNameVersioned} updated");
+
+                    if ($object->isPublished()) {
+                        $tableNameLive = $tableName . '_Live';
+                        DB::prepared_query(
+                            "UPDATE {$tableNameLive} SET {$iconCol} = ? WHERE ID = ?",
+                            [$newIconPath, $object->ID]
+                        );
+                        $output->writeLine("{$tableNameLive} updated");
                     }
-
-
-                    echo 'panel icon updated' . '<br>';
-                } else {
-                    echo $object->Title . '<br>no icon - no update' . '<br>';
                 }
 
-                echo '<br />-------<br />';
+                $output->writeLine("Panel icon updated");
+            } else {
+                $output->writeLine("{$object->Title} - No icon, skipped");
             }
-        } else {
-            echo 'No objects found';
+
+            $output->writeLine("-------");
         }
+
+        return 0;
     }
 }

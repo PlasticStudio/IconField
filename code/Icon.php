@@ -4,6 +4,7 @@ namespace PlasticStudio\IconField;
 
 use SilverStripe\ORM\DB;
 use SilverStripe\Core\Path;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\FieldType\DBField;
@@ -17,7 +18,7 @@ class Icon extends DBField
         'SVG' => 'HTMLFragment'
     );
 
-    public function requireField()
+    public function requireField(): void
     {
         DB::require_field($this->tableName, $this->name, 'Varchar(1024)');
     }
@@ -27,7 +28,7 @@ class Icon extends DBField
      *
      * @return string
      */
-    public function forTemplate()
+    public function forTemplate(): string
     {
         return $this->getTag();
     }
@@ -38,12 +39,12 @@ class Icon extends DBField
      *
      * @return string
      */
-    public function getTag()
+    public function getTag(): string
     {
         $url = $this->URL() ?? '';
 
         // We are an SVG, so return the SVG data
-        if (substr($url, strlen($url) - 4) === '.svg') {
+        if (substr($url, -4) === '.svg') {
             return $this->SVG();
         } else {
             return $this->IMG();
@@ -56,9 +57,9 @@ class Icon extends DBField
      *
      * @return string
      **/
-    public function URL()
+    public function URL(): string
     {
-        return $this->getValue();
+        return (string)$this->getValue();
     }
 
 
@@ -67,12 +68,12 @@ class Icon extends DBField
      *
      * @return string
      **/
-    public function IMG()
+    public function IMG(): string
     {
         $url = ModuleResourceLoader::singleton()->resolveURL($this->URL());
 
         if (!$url) {
-            return false;
+            return ''; // always return a string
         }
 
         // check for default width and height in the site's config.yml
@@ -97,7 +98,7 @@ class Icon extends DBField
      *
      * @return string
      **/
-    public function SVG()
+    public function SVG(): string
     {
         $url = $this->URL() ?? '';
 
@@ -111,7 +112,7 @@ class Icon extends DBField
         );
 
         if (!file_exists($filePath)) {
-            return false;
+            return ''; // always return a string
         }
 
         $svg = file_get_contents($filePath);
@@ -119,11 +120,11 @@ class Icon extends DBField
     }
 
     /**
-     * (non-PHPdoc)
      * @see DBField::scaffoldFormField()
      */
-    public function scaffoldFormField($title = null, $params = null)
+    public function scaffoldFormField(?string $title = null, array $params = []): ?FormField
     {
         return IconField::create($this->name, $title);
     }
+
 }
