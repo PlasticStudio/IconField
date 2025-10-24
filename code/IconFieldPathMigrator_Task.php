@@ -22,7 +22,7 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
     protected string $title = 'Update icon file paths to assets folder';
     protected bool $enabled = true;
     
-    public function run(InputInterface $input, PolyOutput $output): int
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         // Get query parameters (supports both CLI & HTTP dev/tasks)
         $vars = $_GET ?? [];
