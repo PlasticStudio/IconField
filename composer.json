@@ -20,9 +20,9 @@
         ]
     },
 	"require": {
-		"silverstripe/cms": "^4 || ^5 || ^6",
-		"silverstripe/framework": "^4 || ^5 || ^6",
-        "silverstripe/vendor-plugin": "^1 || ^2 || ^3"
+		"silverstripe/cms": "^6",
+		"silverstripe/framework": "^6",
+        "silverstripe/vendor-plugin": "^3"
 	},
 	"minimum-stability": "dev"
 }

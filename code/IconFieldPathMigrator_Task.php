@@ -21,16 +21,16 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
 
     protected string $title = 'Update icon file paths to assets folder';
     protected bool $enabled = true;
-    
+
     protected function execute(InputInterface $input, PolyOutput $output): int
     {
         // Get query parameters (supports both CLI & HTTP dev/tasks)
         $vars = $_GET ?? [];
 
         if (!isset($vars['classname']) || !isset($vars['field'])) {
-            $output->writeLine('Pass both class and field in the query string, eg ?classname=Skeletor\DataObjects\SummaryPanel&field=SVGIcon');
-            $output->writeLine('If new folder is not "SiteIcons", pass new-path in the query string, eg &new-path=NewFolder');
-            $output->writeLine('Classname must include namespace');
+            $output->writeForHtml('Pass both class and field in the query string, eg ?classname=Skeletor\DataObjects\SummaryPanel&field=SVGIcon', true);
+            $output->writeForHtml('If new folder is not "SiteIcons", pass new-path in the query string, eg &new-path=NewFolder', true);
+            $output->writeForHtml('Classname must include namespace', true);
             return 1;
         }
 
@@ -39,7 +39,7 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
         $folderPath = isset($vars['new-path']) ? 'assets/' . $vars['new-path'] : 'assets/SiteIcons';
 
         if (!ClassInfo::exists($classname)) {
-            $output->writeLine("Class {$classname} does not exist. Make sure to include namespace.");
+            $output->writeForHtml("Class {$classname} does not exist. Make sure to include namespace.", true);
             return 1;
         }
 
@@ -47,7 +47,7 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
         $schema = DataObject::getSchema();
 
         if (!$schema->classHasTable($classname)) {
-            $output->writeLine("Class {$classname} does not have a database table.");
+            $output->writeForHtml("Class {$classname} does not have a database table.");
             return 1;
         }
 
@@ -55,7 +55,7 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
         $iconCol = Convert::raw2sql($iconField);
 
         if (!$objects || !$tableName) {
-            $output->writeLine("No objects found for class {$classname}");
+            $output->writeForHtml("No objects found for class {$classname}", true);
             return 0;
         }
 
@@ -66,15 +66,15 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
                 $originIconName = basename($originIconPath);
                 $newIconPath = $folderPath . '/' . $originIconName;
 
-                $output->writeLine("Updating {$object->Title}");
-                $output->writeLine("Origin: {$originIconPath}");
-                $output->writeLine("New path: {$newIconPath}");
+                $output->writeForHtml("Updating {$object->Title}", true);
+                $output->writeForHtml("Origin: {$originIconPath}", true);
+                $output->writeForHtml("New path: {$newIconPath}", true);
 
                 DB::prepared_query(
                     "UPDATE {$tableName} SET {$iconCol} = ? WHERE ID = ?",
                     [$newIconPath, $object->ID]
                 );
-                $output->writeLine("{$tableName} updated");
+                $output->writeForHtml("{$tableName} updated", true);
 
                 if ($object->hasExtension(Versioned::class)) {
                     $tableNameVersioned = $tableName . '_Versions';
@@ -82,7 +82,7 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
                         "UPDATE {$tableNameVersioned} SET {$iconCol} = ? WHERE RecordID = ?",
                         [$newIconPath, $object->ID]
                     );
-                    $output->writeLine("{$tableNameVersioned} updated");
+                    $output->writeForHtml("{$tableNameVersioned} updated", true);
 
                     if ($object->isPublished()) {
                         $tableNameLive = $tableName . '_Live';
@@ -90,16 +90,16 @@ class IconFieldPathMigrator_BuildTask extends BuildTask
                             "UPDATE {$tableNameLive} SET {$iconCol} = ? WHERE ID = ?",
                             [$newIconPath, $object->ID]
                         );
-                        $output->writeLine("{$tableNameLive} updated");
+                        $output->writeForHtml("{$tableNameLive} updated", true);
                     }
                 }
 
-                $output->writeLine("Panel icon updated");
+                $output->writeForHtml("Panel icon updated", true);
             } else {
-                $output->writeLine("{$object->Title} - No icon, skipped");
+                $output->writeForHtml("{$object->Title} - No icon, skipped", true);
             }
 
-            $output->writeLine("-------");
+            $output->writeForHtml("-------", true);
         }
 
         return 0;
