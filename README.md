@@ -10,7 +10,8 @@ Provides a visual icon picker for content authors. Icon files are managable via 
 
 # Requirements
 
-- SilverStripe 4 or 5
+- Silverstripe CMS 6
+- For Silverstripe CMS 4 and 5, see previous releases
 
 # Version
 - Use release 1 for legacy non-cms editable icon files
@@ -54,6 +55,3 @@ PlasticStudio\IconField\IconField:
   default_height: "30"
 
 ```
-
-
-
