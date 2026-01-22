@@ -10,11 +10,12 @@ Provides a visual icon picker for content authors. Icon files are managable via 
 
 # Requirements
 
-- SilverStripe 4 or 5
+- SilverStripe 4, 5 or 6
 
 # Version
 - Use release 1 for legacy non-cms editable icon files
-- Use release 2 updated icon files managed in CMS Files area
+- Use release 2 for Silverstripe 5 with updated icon files managed in CMS Files area
+- Use release 3 for Silverstripe 6
 
 # Migration
 
