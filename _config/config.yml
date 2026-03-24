@@ -4,7 +4,7 @@ Before:
   - "mysite"
   - "app"
 ---
-PlasticStudio\IconField\IconField:
-  icons_folder_name: Icons
-  default_width: "30"
-  default_height: "30"
+# PlasticStudio\IconField\IconField:
+#   icons_folder_name: Icons
+#   default_width: "30"
+#   default_height: "30"
