@@ -38,7 +38,11 @@ If migrating from release 1 to 2/3:
 use PlasticStudio\IconField\Icon;
 use PlasticStudio\IconField\IconField;
 ```
-
+- Add folder name to _config.yml
+```
+PlasticStudio\IconField\IconField:
+  - icons_folder_name: SiteIcons
+```
 - Set your `$db` field to type `Icon` (eg `'PageIcon' => Icon::class`)
 - `IconField::create($name, $title, $folderName)`
   - `$name` is the database field as defined in your class
