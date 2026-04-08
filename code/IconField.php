@@ -64,7 +64,8 @@ class IconField extends OptionsetField
         $icons = [];
         $extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
 
-        $relative_folder_path = Folder::find_or_make($this->getFolderName())->Filename;
+        $relative_folder = Folder::find_or_make($this->getFolderName());
+        $relative_folder_path = $relative_folder->Filename;
         $absolute_folder_path = Path::join(
             ASSETS_PATH,
             $relative_folder_path,
