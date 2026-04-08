@@ -21,6 +21,11 @@ Provides a visual icon picker for content authors. Icon files are managable via 
 
 If migrating from release 1 to 2/3:
 - check if svgs are allowed in mimetypes (guru: https://app.getguru.com/card/TjR6ab8c/SVG-Mime-type)
+- Add folder name to _config.yml
+```
+PlasticStudio\IconField\IconField:
+  - icons_folder_name: SiteIcons
+```
 - upgrade to v2/3
 - create new folders in CMS Files area based on IconField set up, eg `SiteIcons` (or reload cms page with iconfield to create). Can have nested folders inside SiteIcons.
 - upload and publish icons
