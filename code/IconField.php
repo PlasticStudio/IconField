@@ -64,6 +64,9 @@ class IconField extends OptionsetField
         $icons = [];
         $extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
 
+        if (!$this->getFolderName()) {
+            throw new \Exception('No folder name provided for IconField. Please add PlasticStudio\IconField\IconField: icons_folder_name as _config.yml variable.');
+        }
         $relative_folder = Folder::find_or_make($this->getFolderName());
         $relative_folder_path = $relative_folder->Filename;
         $absolute_folder_path = Path::join(
