@@ -24,7 +24,7 @@ If migrating from release 1 to 2/3:
 - Add folder name to _config.yml
 ```
 PlasticStudio\IconField\IconField:
-  - icons_folder_name: SiteIcons
+  icons_folder_name: SiteIcons
 ```
 - upgrade to v2/3
 - create new folders in CMS Files area based on IconField set up, eg `SiteIcons` (or reload cms page with iconfield to create). Can have nested folders inside SiteIcons.
@@ -46,7 +46,7 @@ use PlasticStudio\IconField\IconField;
 - Add folder name to _config.yml
 ```
 PlasticStudio\IconField\IconField:
-  - icons_folder_name: SiteIcons
+  icons_folder_name: SiteIcons
 ```
 - Set your `$db` field to type `Icon` (eg `'PageIcon' => Icon::class`)
 - `IconField::create($name, $title, $folderName)`
